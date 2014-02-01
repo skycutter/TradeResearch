@@ -6,12 +6,37 @@ import java.io.*;
 
 public class Stock {
 	public static void main(String args[]) {
+		Stock myStock = new Stock();
+		myStock.getStockDataService();
+		return;
+	}
 
-		System.out.println("initial test approved!");
+	/**
+	 * A bunch of base service to do
+	 */
+	private void getStockDataService() {
+		getStockDataBaseService("goog");
+	}
 
+	/**
+	 * Base service to get single stock daily data
+	 * @param	stockCode		code for current stock
+	 */
+	private void getStockDataBaseService(String stockCode) {
+		String curUrl = generateURLDaily(stockCode, "json");
+		InputStream response = getResponseFromURL(curUrl);
+		// TO DO: save response to files..
+	} 
+
+	/**
+	 * get response from current url
+	 * @param inputUrl		endpoint url
+	 * @return InputStream  from endpoint
+	 */
+	private InputStream getResponseFromURL(String inputUrl) {
 		URL url = null;
 		try {
-			url = new URL("http://finance.yahoo.com/d/quotes.json?s=MSFT&f=sb2b3jk");
+			url = new URL(inputUrl);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -23,27 +48,39 @@ public class Stock {
 			e.printStackTrace();
 		}
 
-		Map<String,List<String>> headerfields = openConnection.getHeaderFields();
-		if (headerfields != null) {
-			System.out.println(headerfields.get(0));
-		}
-
+		//Map<String,List<String>> headerfields = openConnection.getHeaderFields();
 		InputStream inputStream = null;
 		try {
 			inputStream = openConnection.getInputStream();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		int nextInt = -1;
+		/*int nextInt = -1;
 		try {
 			nextInt = inputStream.read();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println(nextInt);*/
+		return inputStream;
+	}
 
-		System.out.println(nextInt);
+	/**
+	 * Generate finance api url for daily data
+	 * @param stockCode			Stock code to query
+	 * @param formmat			desired response formmat(such as "json")
+	 * @return url
+	 */
+	private String generateURLDaily (String stockCode, String formmat) {
+		if (stockCode.isEmpty()) {
+			return null;
+		}
+		String url = null;
+		url = "http://chartapi.finance.yahoo.com/instrument/1.0/" + url;
+		url += stockCode;
+		url += "/chartdata;type=quote;range=1d/";
+		url += formmat;
 
-		return;
+		return url;
 	}
 }
