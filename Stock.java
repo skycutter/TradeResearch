@@ -25,6 +25,23 @@ public class Stock {
 	private void getStockDataBaseService(String stockCode) {
 		String curUrl = generateURLDaily(stockCode, "json");
 		InputStream response = getResponseFromURL(curUrl);
+
+		try {
+			String fileName = "../StockData/" + stockCode + "_data.txt";
+			FileWriter fstream = new FileWriter(fileName);
+			BufferedWriter bw = new BufferedWriter(fstream);
+
+			BufferedReader br = new BufferedReader(new InputStreamReader(response));
+			String curLine = br.readLine();
+			while (curLine != null) {
+				bw.write(curLine + "\n");
+				curLine = br.readLine();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return;
 		// TO DO: save response to files..
 	} 
 
@@ -61,7 +78,7 @@ public class Stock {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println(nextInt);*/
+		System.out.println(nextInt);*/System.out.println("cur Url is: " + inputUrl);
 		return inputStream;
 	}
 
@@ -75,11 +92,8 @@ public class Stock {
 		if (stockCode.isEmpty()) {
 			return null;
 		}
-		String url = null;
-		url = "http://chartapi.finance.yahoo.com/instrument/1.0/" + url;
-		url += stockCode;
-		url += "/chartdata;type=quote;range=1d/";
-		url += formmat;
+		String url = "http://chartapi.finance.yahoo.com/instrument/1.0/" + stockCode 
+					    + "/chartdata;type=quote;range=1d/" + formmat;
 
 		return url;
 	}
